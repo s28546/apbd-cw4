@@ -4,29 +4,38 @@ namespace LegacyApp
 {
     public class UserService
     {
-        public bool AddUser(string firstName, string lastName, string email, DateTime dateOfBirth, int clientId)
+        public int CalculateAge(DateTime dateOfBirth)
         {
-            if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName))
-            {
-                return false;
-            }
-
-            if (!email.Contains("@") && !email.Contains("."))
-            {
-                return false;
-            }
-
             var now = DateTime.Now;
             int age = now.Year - dateOfBirth.Year;
-            if (now.Month < dateOfBirth.Month || (now.Month == dateOfBirth.Month && now.Day < dateOfBirth.Day)) age--;
+            if (now.Month < dateOfBirth.Month || (now.Month == dateOfBirth.Month && now.Day < dateOfBirth.Day)) 
+                age--;
+            return age;
+        }
 
-            if (age < 21)
-            {
+        public bool EmailValid(string email)
+        {
+            return !email.Contains("@") && !email.Contains(".");
+        }
+
+        public Client getClient(int clientId)
+        {
+            var clientRepository = new ClientRepository();
+            return clientRepository.GetById(clientId);
+        }
+        
+        public bool AddUser(string firstName, string lastName, string email, DateTime dateOfBirth, int clientId)
+        {
+            if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName)) {
                 return false;
             }
 
-            var clientRepository = new ClientRepository();
-            var client = clientRepository.GetById(clientId);
+            int age = CalculateAge(dateOfBirth);
+            if (age < 21) {
+                return false;
+            }
+
+            Client client = getClient(clientId);
 
             var user = new User
             {
