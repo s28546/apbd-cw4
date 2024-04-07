@@ -38,7 +38,7 @@ namespace LegacyApp
             get => _email;
             set
             {
-                if (value.IsNullOrWhiteSpace(value))
+                if (string.IsNullOrWhiteSpace(value))
                 {
                     throw new ArgumentException("Email cannot be null or whitespace.");
                 }
